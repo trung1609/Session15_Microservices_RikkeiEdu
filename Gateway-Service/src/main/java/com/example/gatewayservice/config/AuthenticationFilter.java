@@ -62,9 +62,9 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                 return onError(exchange, HttpStatus.UNAUTHORIZED);
             }
 
-            return  (redisTemplate.hasKey("blacklist:"+jti).flatMap(
-                    isBlacklist ->{
-                        if (Boolean.TRUE.equals(isBlacklist)){
+            return (redisTemplate.hasKey("blacklist:" + jti).flatMap(
+                    isBlacklist -> {
+                        if (Boolean.TRUE.equals(isBlacklist)) {
                             return onError(exchange, HttpStatus.UNAUTHORIZED);
                         }
 

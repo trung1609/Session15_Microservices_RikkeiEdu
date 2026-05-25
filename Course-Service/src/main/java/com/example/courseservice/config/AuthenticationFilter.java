@@ -16,11 +16,9 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -49,6 +47,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 }
                 System.out.println("Permissions: " + authorities);
             }
+            System.out.println("Role: " + role);
+            System.out.println("Username: " + username);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     username, null, authorities
             );

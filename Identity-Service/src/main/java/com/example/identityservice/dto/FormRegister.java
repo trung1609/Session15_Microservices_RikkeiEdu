@@ -3,7 +3,6 @@ package com.example.identityservice.dto;
 import lombok.*;
 
 import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor

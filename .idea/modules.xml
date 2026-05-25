@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Course-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Course-Service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Gateway-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Gateway-Service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Identity-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Identity-Service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Session15.iml" filepath="$PROJECT_DIR$/.idea/Session15.iml" />
     </modules>
   </component>

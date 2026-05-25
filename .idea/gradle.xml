@@ -5,7 +5,10 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/Course-Service" />
+<<<<<<< HEAD
         <option name="gradleJvm" value="ms-17" />
+=======
+>>>>>>> e0f4c671a6fb3edcce94497b32d231b09788c8f5
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/Course-Service" />
@@ -14,7 +17,10 @@
       </GradleProjectSettings>
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/Gateway-Service" />
+<<<<<<< HEAD
         <option name="gradleJvm" value="ms-17" />
+=======
+>>>>>>> e0f4c671a6fb3edcce94497b32d231b09788c8f5
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/Gateway-Service" />
@@ -23,7 +29,10 @@
       </GradleProjectSettings>
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/Identity-Service" />
+<<<<<<< HEAD
         <option name="gradleJvm" value="ms-17" />
+=======
+>>>>>>> e0f4c671a6fb3edcce94497b32d231b09788c8f5
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/Identity-Service" />
