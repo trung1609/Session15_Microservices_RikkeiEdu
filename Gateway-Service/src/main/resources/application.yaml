@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: Gateway-Service
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: Course-Service
+              uri: lb://localhost:8082
+              predicates:
+                - Path=/api/courses/**
+jwt:
+  secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+  expiration_access_token: 900000
+  expiration_refresh_token: 86400000
+server:
+  port: 8888
