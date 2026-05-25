@@ -6,10 +6,7 @@ import com.example.identityservice.dto.JwtResponse;
 import com.example.identityservice.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,5 +22,10 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody FormRegister request){
         return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtResponse> refresh(@RequestParam String refreshToken){
+        return ResponseEntity.ok(authService.refresh(refreshToken));
     }
 }

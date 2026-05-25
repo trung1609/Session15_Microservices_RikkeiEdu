@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -42,7 +44,7 @@ public class AuthService {
         RefreshToken refreshTokenEntity = RefreshToken.builder()
                 .token(refreshToken)
                 .users(users)
-                .expireAt(System.currentTimeMillis() + (expirationRefreshToken * 7))
+                .expireAt(new Date(System.currentTimeMillis() + (expirationRefreshToken * 7)))
                 .build();
 
         refreshTokenRepository.save(refreshTokenEntity);
@@ -67,5 +69,35 @@ public class AuthService {
         userRepository.save(users);
 
         return "Register success";
+    }
+
+    public JwtResponse refresh(String refreshTokenOld){
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(refreshTokenOld)
+                .orElseThrow(() -> new JwtException("Invalid refresh token"));
+
+        int compare = refreshToken.getExpireAt().compareTo(new Date());
+        if (compare <= 0){
+            throw new JwtException("Refresh token expired");
+        }
+
+        Users users = refreshToken.getUsers();
+        String accessToken = jwtUtil.generateAccessToken(users);
+        String newRefreshToken = jwtUtil.generateRefreshToken(users);
+
+        refreshTokenRepository.delete(refreshToken);
+
+        RefreshToken newRefreshTokenEntity = RefreshToken.builder()
+                .token(newRefreshToken)
+                .users(users)
+                .expireAt(new Date(System.currentTimeMillis() + (expirationRefreshToken * 7)))
+                .build();
+        refreshTokenRepository.save(newRefreshTokenEntity);
+
+        return JwtResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(newRefreshToken)
+                .expireAccessToken(System.currentTimeMillis() + expirationAccessToken)
+                .expireRefreshToken(System.currentTimeMillis() + (expirationRefreshToken * 7))
+                .build();
     }
 }

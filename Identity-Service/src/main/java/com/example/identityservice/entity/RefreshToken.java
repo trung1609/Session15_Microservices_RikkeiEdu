@@ -3,6 +3,8 @@ package com.example.identityservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Entity
 @Getter
 @Setter
@@ -20,5 +22,5 @@ public class RefreshToken {
     @JoinColumn(name = "user_id")
     private Users users;
 
-    private long expireAt;
+    private Date expireAt;
 }
