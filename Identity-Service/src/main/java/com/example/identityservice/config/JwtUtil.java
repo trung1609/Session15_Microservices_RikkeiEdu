@@ -79,4 +79,12 @@ public class JwtUtil {
             throw new JwtException("Have an error occur");
         }
     }
+
+    public Claims extractAllClaims(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 }

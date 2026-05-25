@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -25,6 +26,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private String secretKey;
 
     private final JwtUtil jwtUtil;
+    private final ReactiveRedisTemplate<String, String> redisTemplate;
 
     private final List<String> openApiEndpoints = List.of(
             "/api/auth/login",
@@ -44,25 +46,38 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             return onError(exchange, HttpStatus.UNAUTHORIZED);
         }
 
-        String token = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-        if (token == null || !token.startsWith("Bearer ")) {
+        String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return onError(exchange, HttpStatus.UNAUTHORIZED);
         }
-        token = token.substring(7);
+        String token = authHeader.substring(7);
+
         try {
-            if (jwtUtil.validateToken(token) && jwtUtil.extractAllClaims(token).get("type").equals("access")) {
-                Claims claims = jwtUtil.extractAllClaims(token);
-                String role = claims.get("role", String.class);
-                String username = claims.getSubject();
-                ServerHttpRequest mutedRequest = exchange.getRequest().mutate()
-                        .header("X-User-Role", role)
-                        .header("X-User-Username", username)
-                        .build();
-                ServerWebExchange mutedExchange = exchange.mutate().request(mutedRequest).build();
-                return chain.filter(mutedExchange);
-            } else {
+            Claims claims = jwtUtil.extractAllClaims(token);
+            String jti = claims.get("jti", String.class);
+            String type = claims.get("type", String.class);
+            if ("access".equals(type) || !jwtUtil.validateToken(token)) {
                 return onError(exchange, HttpStatus.UNAUTHORIZED);
             }
+
+            return  (redisTemplate.hasKey("blacklist:"+jti).flatMap(
+                    isBlacklist ->{
+                        if (Boolean.TRUE.equals(isBlacklist)){
+                            return onError(exchange, HttpStatus.UNAUTHORIZED);
+                        }
+
+                        String role = claims.get("role", String.class);
+                        String username = claims.getSubject();
+
+                        ServerHttpRequest mutatedRequest = request.mutate()
+                                .header("X-User-Role", role)
+                                .header("X-User-Username", username)
+                                .build();
+
+                        ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+                        return chain.filter(mutatedExchange);
+                    }
+            ));
         } catch (ExpiredJwtException e) {
             return onError(exchange, HttpStatus.UNAUTHORIZED);
         }
