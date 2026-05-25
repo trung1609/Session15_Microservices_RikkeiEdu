@@ -1,5 +1,6 @@
 package com.example.gatewayservice.config;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,10 +51,12 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         token = token.substring(7);
         try {
             if (jwtUtil.validateToken(token) && jwtUtil.extractAllClaims(token).get("type").equals("access")) {
-                String role = jwtUtil.extractAllClaims(token).get("role").toString();
-
-                ServerHttpRequest mutedRequest = request.mutate()
+                Claims claims = jwtUtil.extractAllClaims(token);
+                String role = claims.get("role", String.class);
+                String username = claims.getSubject();
+                ServerHttpRequest mutedRequest = exchange.getRequest().mutate()
                         .header("X-User-Role", role)
+                        .header("X-User-Username", username)
                         .build();
                 ServerWebExchange mutedExchange = exchange.mutate().request(mutedRequest).build();
                 return chain.filter(mutedExchange);

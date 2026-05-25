@@ -7,7 +7,7 @@ spring:
         webflux:
           routes:
             - id: Course-Service
-              uri: lb://localhost:8082
+              uri: http://localhost:8082
               predicates:
                 - Path=/api/courses/**
 jwt:
